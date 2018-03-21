@@ -34,16 +34,24 @@
             android:orientation="vertical">
 
             <Button
-                android:id="@+id/plug_skin_tv"
+                android:id="@+id/plug_skin_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="插件式换肤" />
+                android:text="插件式换肤"
+                android:textColor="@color/yx_skin_left_btn_text_color" />
 
             <Button
-                android:id="@+id/apply_skin_tv"
+                android:id="@+id/apply_skin_btn"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="应用换肤" />
+
+            <Button
+                android:id="@+id/default_btn"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="恢复默认" />
+
         </LinearLayout>
 
 
