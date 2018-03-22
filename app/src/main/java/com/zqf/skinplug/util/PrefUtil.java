@@ -55,6 +55,7 @@ public class PrefUtil {
         return sp.getString(Constant.KEY_LOCAL_PLUG, "");
     }
 
+    //清空SharedPreferences设置
     public void clear() {
         SharedPreferences sp = mContext.getSharedPreferences(Constant.SKIN_PLUG_PREF_NAME, Context.MODE_PRIVATE);
         sp.edit().clear().apply();

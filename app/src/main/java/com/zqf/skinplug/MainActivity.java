@@ -63,6 +63,11 @@ public class MainActivity extends BaseSkinActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.plug_skin_btn:
+                File SkinPlugApk_file = new File(skin_plugin_apk_path);
+                if (!SkinPlugApk_file.exists()) {
+                    Log.e("Tag", "插件包不存在");
+                    return;
+                }
                 SkinManager.getsInstance().changeSkin(skin_plugin_apk_path, skin_plugin_pkgname, new ISkinChangingCallback() {
                     @Override
                     public void onStart() {
@@ -84,6 +89,7 @@ public class MainActivity extends BaseSkinActivity {
                 SkinManager.getsInstance().changeSkin("blue");
                 break;
             case R.id.default_btn:
+                SkinManager.getsInstance().changeSkin("");
                 break;
         }
     }

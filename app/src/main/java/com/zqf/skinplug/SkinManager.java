@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.zqf.skinplug.attr.SkinView;
 import com.zqf.skinplug.callback.ISkinChangedListener;
@@ -11,7 +12,6 @@ import com.zqf.skinplug.callback.ISkinChangingCallback;
 import com.zqf.skinplug.util.PrefUtil;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -49,8 +49,9 @@ public class SkinManager {
         return sInstance;
     }
 
-    //初始化
+    //初始化在Application里
     public void init(Context context) {
+        Log.e("Tag", "开始Application初始化");
         mContext = context.getApplicationContext();
         mPrefUtil = new PrefUtil(mContext);
         try {
@@ -65,6 +66,7 @@ public class SkinManager {
             mCurentPkg = plugPkg;
         } catch (Exception e) {
             e.printStackTrace();
+            Log.e("Tag", "初始化异常");
             mPrefUtil.clear();
         }
     }
@@ -73,11 +75,10 @@ public class SkinManager {
         if (!userSkinPlug()) {
             return new ResourcesManage(mContext.getResources(), mContext.getPackageName(), mSuffix);
         }
-
         return mResourcesManage;
     }
 
-
+    //加载皮肤插件包
     private void loadskinpkg(String skin_plugin_apk_path, String skin_plugin_pkgname) {
         try {
             //当前如果皮肤相同不换
@@ -85,7 +86,7 @@ public class SkinManager {
                 return;
             }
             //当皮肤与当前不一样执行换肤
-            //AssetManager
+            //AssetManager 使用反射得到
             AssetManager assetManager = AssetManager.class.newInstance();
             Method addAssetPathMethod = assetManager.getClass().getMethod("addAssetPath", String.class);
             addAssetPathMethod.invoke(assetManager, skin_plugin_apk_path);
@@ -93,41 +94,36 @@ public class SkinManager {
             Resources resources = new Resources(assetManager,
                     superResources.getDisplayMetrics(), superResources.getConfiguration());
             mResourcesManage = new ResourcesManage(resources, skin_plugin_pkgname, null);
-
+            //换肤成功后赋值，以便下次进行比对是否是相同皮肤插件包
             mCurentPath = skin_plugin_apk_path;
             mCurentPkg = skin_plugin_pkgname;
-
-
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
+    //得到所有SkinView
     public List<SkinView> getSkinViews(ISkinChangedListener listener) {
         return mSkinViewMaps.get(listener);
     }
 
+    //添加SkinView
     public void addSkinView(ISkinChangedListener listener, List<SkinView> views) {
         mSkinViewMaps.put(listener, views);
     }
 
+    //注册SkinView
     public void registListener(ISkinChangedListener listener) {
         mSkinListeners.add(listener);
     }
 
+    //解绑SkinView
     public void unregistListener(ISkinChangedListener listener) {
         mSkinListeners.remove(listener);
         mSkinViewMaps.remove(listener);
     }
 
-    //清除插件细信息
+    //清除插件信息
     private void clearPlugInfo() {
         mCurentPath = "";
         mCurentPkg = "";
@@ -135,6 +131,7 @@ public class SkinManager {
         mPrefUtil.clear();
     }
 
+    //开始应用内换肤
     public void changeSkin(String suffix) {
         clearPlugInfo();
         mSuffix = suffix;
@@ -142,6 +139,7 @@ public class SkinManager {
         notifyChangedListener();
     }
 
+    //更换插件包内皮肤
     public void changeSkin(final String skin_plugin_apk_path, final String skin_plugin_pkgname, ISkinChangingCallback iSkinChangingCallback) {
         if (iSkinChangingCallback == null) {
             iSkinChangingCallback = ISkinChangingCallback.DEFAULT_SKIN_CHANGE_CALLBACK;
@@ -181,6 +179,7 @@ public class SkinManager {
         }.execute();
     }
 
+    //更新插件包信息
     private void updateSkinPluginfo(String plugin_path, String plugin_pkgname) {
         mPrefUtil.saveSkinPlug(plugin_path);
         mPrefUtil.saveSkinPlug(plugin_pkgname);
