@@ -47,20 +47,17 @@ public class BaseSkinActivity extends AppCompatActivity implements ISkinChangedL
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
-
         //注册Activity，避免内存泄露
         SkinManager.getsInstance().registListener(this);
         LayoutInflater inflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         LayoutInflaterCompat.setFactory(inflater, new LayoutInflaterFactory() {
             @Override
             public View onCreateView(View parent, String name, Context context, AttributeSet attrs) {
-
                 //判断系统是否使用
                 //完成AppCompat factory的工作
                 AppCompatDelegate delegate = getDelegate();
                 View mView = null;
                 List<SkinAttr> skinAttrs = null;
-
                 try {
                     if (mCreateViewMethod == null) {
                         mCreateViewMethod = delegate.getClass().getMethod("createView", mCreateViewSignature);
@@ -97,16 +94,15 @@ public class BaseSkinActivity extends AppCompatActivity implements ISkinChangedL
             SkinManager.getsInstance().addSkinView(this, skinViews);
         }
         skinViews.add(new SkinView(mView, skinAttrs));
-
-        //当前是否需要自动换肤，
-
-
+        //第二次进入App当前是否需要自动换肤，
+        if (SkinManager.getsInstance().needChangeSkin()) {
+            SkinManager.getsInstance().skinChanged(this);
+        }
     }
 
     private View createView(Context context, String name, String prefix)
             throws ClassNotFoundException, InflateException {
         Constructor<? extends View> constructor = sConstructorMap.get(name);
-
         try {
             if (constructor == null) {
                 // Class not found in the cache, see if it's real, and try to add it

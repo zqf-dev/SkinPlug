@@ -1,6 +1,5 @@
 package com.zqf.skinplug;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.view.GravityCompat;
@@ -33,10 +32,9 @@ public class MainActivity extends BaseSkinActivity {
     Button defaultBtn;
     //皮肤插件包的存放路径
     private String skin_plugin_apk_path = Environment.getExternalStorageDirectory()
-            + File.separator + "skin_plugin.apk";
+            + File.separator + "test_skin_plugin.apk";
     //皮肤插件包的包名
-    private String skin_plugin_pkgname = "com.zqf.testskinplug";
-
+    private String skin_plugin_pkgname = "com.zqf.testskinplugdemo";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,28 +63,34 @@ public class MainActivity extends BaseSkinActivity {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.plug_skin_btn:
-                startActivity(new Intent(this, BaseSkinActivity.class));
                 SkinManager.getsInstance().changeSkin(skin_plugin_apk_path, skin_plugin_pkgname, new ISkinChangingCallback() {
                     @Override
                     public void onStart() {
-                        Log.e("Tag","开始");
+                        Log.e("Tag", "开始");
                     }
 
                     @Override
                     public void onError(Exception e) {
-//                        Log.e("Tag","操作失败");
+                        Log.e("Tag", "操作失败");
                     }
 
                     @Override
                     public void onComplete() {
-                        Log.e("Tag","完成");
+                        Log.e("Tag", "完成");
                     }
                 });
                 break;
             case R.id.apply_skin_btn:
+                SkinManager.getsInstance().changeSkin("blue");
                 break;
             case R.id.default_btn:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        ButterKnife.unbind(this);
     }
 }

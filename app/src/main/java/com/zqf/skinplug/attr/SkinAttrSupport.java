@@ -41,7 +41,7 @@ public class SkinAttrSupport {
                 }
             }
         }
-        return null;
+        return mSkinAttrsList;
     }
 
 

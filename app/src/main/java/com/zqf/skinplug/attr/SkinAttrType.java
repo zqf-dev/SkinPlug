@@ -51,10 +51,6 @@ public enum SkinAttrType {
         return resType;
     }
 
-    public void setResType(String resType) {
-        this.resType = resType;
-    }
-
     SkinAttrType(String type) {
         resType = type;
     }
